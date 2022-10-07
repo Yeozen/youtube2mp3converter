@@ -32,7 +32,7 @@ app.post("/convert-mp3", async (req, res) => {
     ){
         return res.render("index", {success : false, message : "Please enter a video ID"});
     }else{
-        const shortvidID = videoId.substr(32, 11);
+        const shortvidID = videoId.substr(30, 11);
         const fetchAPI = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${shortvidID}`,{
             "method" : "GET",
             "headers": {
