@@ -43,7 +43,7 @@ app.post("/convert-mp3", async (req, res) => {
             console.log(videoId);
         }
         else if (devicetype == "phone"){
-            trimmedvideoId = videoId.substr(30, 11);
+            trimmedvideoId = videoId.substr(16, 11);
         }
 
         console.log(trimmedvideoId);
