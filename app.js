@@ -8,8 +8,8 @@ const app = express();
 
 //detect what device is accessing the site
 var device = require('express-device');
+const e = require("express");
 app.use(device.capture());
-console.log(device);
 
 //server port number
 const PORT = process.env.PORT || 3000;
@@ -30,6 +30,7 @@ app.get("/", (req, res) => {
 
 app.post("/convert-mp3", async (req, res) => {
     const videoId = req.body.videoID;
+    let devicetype = String(req.device.type);
     if(
         videoId === undefined ||
         videoId === "" ||
@@ -37,10 +38,16 @@ app.post("/convert-mp3", async (req, res) => {
     ){
         return res.render("index", {success : false, message : "Please enter a video ID"});
     }else{
-        //const shortvidID = videoId.substr(30, 11);
-        const longvidID = videoId.substr(32, 11);
-        console.log(longvidID);
-        const fetchAPI = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${longvidID}`,{
+        if (devicetype == "desktop"){
+            trimmedvideoId = videoId.substr(32, 11);
+            console.log(videoId);
+        }
+        else if (devicetype == "phone"){
+            trimmedvideoId = videoId.substr(30, 11);
+        }
+
+        console.log(trimmedvideoId);
+        const fetchAPI = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${trimmedvideoId}`,{
             "method" : "GET",
             "headers": {
                 "X-RapidAPI-Key": process.env.API_KEY,
