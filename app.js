@@ -6,6 +6,11 @@ require ("dotenv").config();
 //create the express server
 const app = express();
 
+//detect what device is accessing the site
+var device = require('express-device');
+app.use(device.capture());
+console.log(device);
+
 //server port number
 const PORT = process.env.PORT || 3000;
 
@@ -20,7 +25,7 @@ app.use(express.urlencoded({
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.render("index.ejs")
+    res.render("index")
 })
 
 app.post("/convert-mp3", async (req, res) => {
@@ -32,7 +37,10 @@ app.post("/convert-mp3", async (req, res) => {
     ){
         return res.render("index", {success : false, message : "Please enter a video ID"});
     }else{
-        const fetchAPI = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${videoId}`,{
+        //const shortvidID = videoId.substr(30, 11);
+        const longvidID = videoId.substr(32, 11);
+        console.log(longvidID);
+        const fetchAPI = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${longvidID}`,{
             "method" : "GET",
             "headers": {
                 "X-RapidAPI-Key": process.env.API_KEY,
