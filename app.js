@@ -20,7 +20,7 @@ app.use(express.urlencoded({
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.render("index.ejs")
+    res.render("index")
 })
 
 app.post("/convert-mp3", async (req, res) => {
@@ -32,8 +32,10 @@ app.post("/convert-mp3", async (req, res) => {
     ){
         return res.render("index", {success : false, message : "Please enter a video ID"});
     }else{
-        const shortvidID = videoId.substr(30, 11);
-        const fetchAPI = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${shortvidID}`,{
+        //const shortvidID = videoId.substr(30, 11);
+        const longvidID = videoId.substr(32, 11);
+        console.log(longvidID);
+        const fetchAPI = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${longvidID}`,{
             "method" : "GET",
             "headers": {
                 "X-RapidAPI-Key": process.env.API_KEY,
@@ -56,3 +58,4 @@ app.post("/convert-mp3", async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 })
+
