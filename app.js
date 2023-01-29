@@ -9,6 +9,7 @@ const app = express();
 //detect what device is accessing the site
 var device = require('express-device');
 app.use(device.capture());
+console.log(device);
 
 //server port number
 const PORT = process.env.PORT || 3000;
