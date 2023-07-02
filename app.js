@@ -45,24 +45,36 @@ app.post("/convert-mp3", async (req, res) => {
         else if (devicetype == "phone"){
             trimmedvideoId = videoId.substr(17, 11);
         }
+        fetchVideoStatus(trimmedvideoId);
 
-        console.log(trimmedvideoId);
-        const fetchAPI = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${trimmedvideoId}`,{
-            "method" : "GET",
-            "headers": {
-                "X-RapidAPI-Key": process.env.API_KEY,
-                "X-RapidAPI-Host": process.env.API_HOST
-              }
-        });
+        async function fetchVideoStatus(trimmedvideoId) {
+            console.log(trimmedvideoId);
+            const fetchAPI = await fetch(`https://youtube-mp36.p.rapidapi.com/dl?id=${trimmedvideoId}`,{
+                "method" : "GET",
+                "headers": {
+                    "X-RapidAPI-Key": process.env.API_KEY,
+                    "X-RapidAPI-Host": process.env.API_HOST
+                }
+            });
 
-        const fetchResponse = await fetchAPI.json()
+            const fetchResponse = await fetchAPI.json()
 
-        console.log(fetchResponse);
+            console.log(fetchResponse);
 
-        if(fetchResponse.status === "ok")
-            return res.render("index", {success : true, song_title: fetchResponse.title, song_link: fetchResponse.link});
-        else
-            return res.render("index", {success: false, message: fetchResponse.msg})
+            if(fetchResponse.status === "ok"){
+                return res.render("index", {success : true, song_title: fetchResponse.title, song_link: fetchResponse.link});
+            }
+            else if (fetchResponse.status === "processing"){
+                await new Promise(resolve => setTimeout(resolve, 1000));
+        
+                // Make another call to the API recursively
+                return fetchVideoStatus(trimmedvideoId);
+            }
+            else{
+                console.log(fetchResponse.msg);
+                return res.render("index", {success: false, message: fetchResponse.msg})
+            }
+        }        
     }
 })
 
@@ -70,4 +82,5 @@ app.post("/convert-mp3", async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
 })
+
 
